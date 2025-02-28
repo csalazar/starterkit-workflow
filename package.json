@@ -6,14 +6,17 @@
   "license": "CC0-1.0",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf dist/ && vite build"
+    "clean": "rm -rf dist/",
+    "build": "bash ./scripts/build.sh"
   },
   "dependencies": {
-    "@caido/sdk-workflow": "0.39.0",
-    "@caido/dependency-example": "0.1.0"
+    "@caido/dependency-example": "0.1.0",
+    "@caido/sdk-workflow": "0.46.0"
   },
   "devDependencies": {
-    "typescript": "5.4.5",
-    "vite": "5.2.11"
-  }
+    "@types/node": "^22.13.5",
+    "typescript": "5.7.3",
+    "vite": "6.2.0"
+  },
+  "type": "module"
 }

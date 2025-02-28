@@ -1,17 +1,23 @@
-import { defineConfig } from "vite";
-import { resolve } from "path";
 import fs from "fs";
+import { resolve } from "path";
+import { defineConfig } from "vite";
+
+const workflowName: string | undefined = process.env.VITE_WORKFLOW_NAME;
+if (!workflowName) {
+  throw new Error("VITE_WORKFLOW_NAME is required");
+}
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, "src/index.ts"),
+      entry: resolve(__dirname, "src", workflowName, "index.ts"),
       name: "plugin-template",
       fileName: (format) => "script.js",
       formats: ["es"],
     },
-    outDir: "dist",
+    outDir: `dist/${workflowName}`,
     rollupOptions: {
       external: [/caido:.+/],
       output: {
@@ -23,7 +29,7 @@ export default defineConfig({
           generateBundle: async function generateBundle(options, bundle) {
             const script = bundle["script.js"];
             if (script && script.type === "chunk") {
-              const templatePath = resolve(__dirname, "workflow.template.json");
+              const templatePath = resolve(__dirname, "src", workflowName, "workflow.json");
               const template = await fs.promises.readFile(
                 templatePath,
                 "utf-8",
@@ -39,18 +45,7 @@ export default defineConfig({
               });
             }
           },
-        },
-        {
-          name: "Banner",
-          banner: async function generateBanner() {
-            const pkg = require(resolve(__dirname, "package.json"));
-            return `/** \n *  @preserve\n *  Bundle of '${
-              pkg.name
-            }'\n *  Generated: ${new Date().toISOString()}\n *  Version: ${
-              pkg.version
-            }\n**/`;
-          },
-        },
+        }
       ],
     },
   },
